@@ -1,6 +1,9 @@
 package com.masivian.roulette.model;
+import java.io.Serializable;
+import lombok.Data;
 
-public class BetOnColor extends Bet{
+@Data
+public class BetOnColor extends Bet implements Serializable{
     private String color;
     public BetOnColor(){
         super();

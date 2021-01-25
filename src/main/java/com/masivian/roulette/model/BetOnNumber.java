@@ -1,6 +1,9 @@
 package com.masivian.roulette.model;
+import java.io.Serializable;
+import lombok.Data;
 
-public class BetOnNumber extends Bet{
+@Data
+public class BetOnNumber extends Bet implements Serializable{
     private int number;
     public BetOnNumber(){
         super();
