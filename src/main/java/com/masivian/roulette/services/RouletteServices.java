@@ -10,5 +10,4 @@ public interface RouletteServices {
     public List<Bet> closeRoulette(int id, List<Bet> bets) throws RouletteException;
     public Roulette getRouletteByID(int id )throws RouletteException;
     public List<Roulette> listAllRoulettes();
-    public int getNumberOfRoulettes();
 }

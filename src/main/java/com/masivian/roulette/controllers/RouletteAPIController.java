@@ -31,7 +31,7 @@ public class RouletteAPIController {
         public ResponseEntity<?> openRoulette(@PathVariable ("id") int id){
             try {          
                 rouletteServices.openRoulette(id);
-                return new ResponseEntity<>("Roulette "+id+" opened",HttpStatus.ACCEPTED);
+                return new ResponseEntity<>("Ruleta numero "+id+" abierta",HttpStatus.ACCEPTED);
             } catch (RouletteException ex) {
                 return new ResponseEntity<>("ERROR: "+ex.getMessage(),HttpStatus.BAD_REQUEST);
             }

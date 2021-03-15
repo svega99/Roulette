@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class RouletteRepositoryImplementation implements RouletteRepository{
+public class RouletteRepositoryImpl implements RouletteRepository{
     @Autowired
     private RedisTemplate redisTemplate;
     private static final String KEY="ROULETTE";
@@ -23,7 +23,7 @@ public class RouletteRepositoryImplementation implements RouletteRepository{
              redisTemplate.opsForHash().put(KEY,roulette.getID(),roulette);
         }
         catch(Exception e){
-            throw new RouletteException("Roulette could not be created or updated");
+            throw new RouletteException("La ruleta no pudo ser creda o actualizada");
         }
     }
     @Override

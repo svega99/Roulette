@@ -1,4 +1,5 @@
 package com.masivian.roulette.controllers;
+import com.masivian.roulette.exception.RouletteException;
 import com.masivian.roulette.model.BetOnColor;
 import com.masivian.roulette.model.BetOnNumber;
 import com.masivian.roulette.services.BetServices;
@@ -24,8 +25,8 @@ public class BetAPIController {
             try {
                 Roulette roulette = rouletteServices.getRouletteByID(betOnColor.getRouletteID());
                 betServices.createBetOnColor(betOnColor,roulette);
-                return new ResponseEntity<>("Bet Created",HttpStatus.CREATED);
-            } catch (Exception ex) {
+                return new ResponseEntity<>("Apuesta creada correctamente",HttpStatus.CREATED);
+            } catch (RouletteException ex) {
                 return new ResponseEntity<>("ERROR: "+ex.getMessage(),HttpStatus.FORBIDDEN);            
             }
         }
@@ -34,8 +35,8 @@ public class BetAPIController {
             try {
                 Roulette roulette = rouletteServices.getRouletteByID(betOnNumber.getRouletteID());
                 betServices.createBetOnNumber(betOnNumber,roulette);
-                return new ResponseEntity<>("Bet Created",HttpStatus.CREATED);
-            } catch (Exception ex) {
+                return new ResponseEntity<>("Apuesta creada correctamente",HttpStatus.CREATED);
+            } catch (RouletteException ex) {
                 return new ResponseEntity<>("ERROR: "+ex.getMessage(),HttpStatus.FORBIDDEN);            
             }
         }

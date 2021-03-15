@@ -12,7 +12,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
-public class RouletteServicesImplementation implements RouletteServices{
+public class RouletteServicesImpl implements RouletteServices{
     @Autowired
     RouletteRepository rouletteRepository;
     @Override
@@ -28,7 +28,7 @@ public class RouletteServicesImplementation implements RouletteServices{
         try{
              Roulette roulette = getRouletteByID(id);
              if (roulette.getState().equals("OPEN")){
-                 throw new RouletteException("Roulette is already open");
+                 throw new RouletteException("La ruleta ya se encuentra abierta");
              }else{
                  roulette.setState("OPEN");
                  roulette.setWinningColor("");
@@ -36,9 +36,9 @@ public class RouletteServicesImplementation implements RouletteServices{
              }
              rouletteRepository.createOrUpdateRoulette(roulette);
         }catch(NullPointerException ex){
-            throw new RouletteException("Roulette not found");
+            throw new RouletteException("Ruleta no encontrada");
         }catch(RouletteException re){
-            throw new RouletteException("Roulette is already open");
+            throw new RouletteException("La ruleta ya se encuentra abierta");
         }
         
     }
@@ -48,7 +48,7 @@ public class RouletteServicesImplementation implements RouletteServices{
             List<Bet> rouletteBets = new ArrayList<>();
             Roulette roulette = getRouletteByID(id);
             if (!roulette.getState().equals("OPEN")){
-                throw new RouletteException("Roulette is not open");
+                throw new RouletteException("La ruleta no esta abierta");
             }else{
                 setWinner(roulette);
                 rouletteBets = setRouletteBetsResults(bets,roulette);
@@ -56,23 +56,21 @@ public class RouletteServicesImplementation implements RouletteServices{
             rouletteRepository.createOrUpdateRoulette(roulette);
             return rouletteBets;
         }catch(NullPointerException ex){
-            throw new RouletteException("Roulette not found");
+            throw new RouletteException("Ruleta no encontrada");
         }catch(RouletteException re){
-            throw new RouletteException("Roulette is not open");
+            throw new RouletteException("La ruleta no esta abierta");
         }
     }
     @Override
     public List<Roulette> listAllRoulettes() {
         return rouletteRepository.listAllRoulettes();
     }
-
     @Override
     public Roulette getRouletteByID(int id) throws RouletteException {
         Roulette roulette=rouletteRepository.getRouletteByID(id);
         return roulette;
     }
-    @Override
-    public int getNumberOfRoulettes() {
+    private int getNumberOfRoulettes() {
         return rouletteRepository.getNumberOfRoulettes();
     }
     private void setWinner(Roulette roulette) {
@@ -92,28 +90,34 @@ public class RouletteServicesImplementation implements RouletteServices{
         for (Bet b:bets){
             if(b.getRouletteID()==roulette.getID() && b.getState().equals("PLAYING")){ 
                 if(b instanceof BetOnColor){
-                    if(((BetOnColor) b).getColor().equals(roulette.getWinningColor())){
-                        b.setState("WINNER");
-                        b.setAmount((int) (b.getAmount()*1.8));
-                    }
-                    else{
-                        b.setState("LOSER");
-                        b.setAmount(0);
-                    }
+                    setBetOnColorResult(b,roulette.getWinningColor());
                 }
                 if(b instanceof BetOnNumber){
-                    if(((BetOnNumber) b).getNumber()==roulette.getWinningNumber()){
-                        b.setState("WINNER");
-                        b.setAmount(b.getAmount()*5);
-                    }
-                    else{
-                        b.setState("LOSER");
-                        b.setAmount(0);
-                    }
+                   setBetOnNumberResult(b,roulette.getWinningNumber() );
                 }
                 rouletteBets.add(b);
             }
         }
         return rouletteBets;
-    } 
+    }
+    private void setBetOnColorResult(Bet bet, String winningcolor){
+        if(((BetOnColor) bet).getColor().equals(winningcolor)){
+            bet.setState("WINNER");
+            bet.setAmount((int) (bet.getAmount()*1.8));
+        }
+        else{
+            bet.setState("LOSER");
+            bet.setAmount(0);
+        }
+    }
+    private void setBetOnNumberResult(Bet bet, int winningNumber){
+         if(((BetOnNumber) bet).getNumber()==winningNumber){
+            bet.setState("WINNER");
+            bet.setAmount(bet.getAmount()*5);
+        }
+        else{
+            bet.setState("LOSER");
+            bet.setAmount(0);
+        }
+    }
 }

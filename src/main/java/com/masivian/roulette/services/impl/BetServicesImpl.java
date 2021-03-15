@@ -11,25 +11,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BetServicesImplementation implements BetServices{
+public class BetServicesImpl implements BetServices{
     @Autowired
     BetRepository betRepository;
     @Override
     public void createBetOnColor(BetOnColor betOnColor, Roulette roulette) throws RouletteException{
-        if (isOpen(roulette) && isAmountInRange(betOnColor.getAmount()) && (betOnColor.getColor().equals("BLACK") || betOnColor.getColor().equals("RED"))){
-            setVariables(betOnColor);
+        int betAmount = betOnColor.getAmount();
+        String betColor = betOnColor.getColor(); 
+        if (validateAnyBet(roulette,betAmount) && (betColor.equals("BLACK") || betColor.equals("RED"))){
+            setDefaultVariablesOfBet(betOnColor);
             betRepository.createOrUpdateBet(betOnColor);
         }else{
-            throw new RouletteException("Bet not valid");
+            throw new RouletteException("Apuesta no válida");
         }
     }
     @Override
     public void createBetOnNumber(BetOnNumber betOnNumber, Roulette roulette) throws RouletteException{
-        if(isOpen(roulette) && isAmountInRange(betOnNumber.getAmount()) && (betOnNumber.getNumber()>=0 && betOnNumber.getNumber()<=36)){
-            setVariables(betOnNumber);
+        int betAmount = betOnNumber.getAmount();
+        int betNumber = betOnNumber.getNumber();
+        if(validateAnyBet(roulette,betAmount) && (betNumber>=0 && betNumber<=36)){
+            setDefaultVariablesOfBet(betOnNumber);
             betRepository.createOrUpdateBet(betOnNumber);
         }else{
-            throw new RouletteException("Bet not valid");
+            throw new RouletteException("Apuesta no válida");
         }
     }
     @Override
@@ -42,18 +46,15 @@ public class BetServicesImplementation implements BetServices{
             betRepository.createOrUpdateBet(b);
         }
     }
-    private boolean isAmountInRange(int amount){
-        return amount<=10000 && amount>0;
-    }
-    private boolean isOpen(Roulette roulette)throws RouletteException{
+    private boolean validateAnyBet(Roulette roulette, int amount)throws RouletteException{
         try {
             String state = roulette.getState();
-            return state.equals("OPEN");
+            return state.equals("OPEN") && (amount<=10000 && amount>0);
         }catch(NullPointerException ex){
-            throw new RouletteException("Roulette does not exist");
+            throw new RouletteException("La ruleta no existe");
         }
     }
-    private void setVariables(Bet bet) {
+    private void setDefaultVariablesOfBet(Bet bet) {
         int newID=betRepository.getNumberOfBets()+1;
         bet.setID(newID);
         bet.setState("PLAYING");

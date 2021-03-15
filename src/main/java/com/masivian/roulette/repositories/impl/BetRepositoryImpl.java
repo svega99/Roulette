@@ -8,7 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class BetRepositoryImplementation implements BetRepository{
+public class BetRepositoryImpl implements BetRepository{
     @Autowired
     private RedisTemplate redisTemplate;
     private static final String KEY="BETS";
@@ -18,7 +18,7 @@ public class BetRepositoryImplementation implements BetRepository{
              redisTemplate.opsForHash().put(KEY,bet.getID(),bet);
         }
         catch(Exception e){
-            throw new RouletteException("Bet could not be created or updated");
+            throw new RouletteException("La apuesta no pudo ser creada o actualizada");
         }
     }
     @Override
